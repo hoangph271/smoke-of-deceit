@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Smoke of Deceit</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header>
+    <h1>Smoke of Deceit</h1>
+    <label class="switch">
+      <input type="checkbox" data-setting="enabled">
+      <span class="slider" aria-hidden="true"></span>
+      <span class="sr-only">Enabled</span>
+    </label>
+  </header>
+
+  <fieldset id="features">
+    <legend>Facebook</legend>
+    <label class="row">
+      <span>Hide Like / React</span>
+      <input type="checkbox" data-setting="hideReactions">
+    </label>
+    <label class="row">
+      <span>Hide comment box</span>
+      <input type="checkbox" data-setting="hideCommentBox">
+    </label>
+  </fieldset>
+
+  <script src="../shared/settings.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

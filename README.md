@@ -36,7 +36,8 @@ Ordered roughly by impact. These are suggestions; nothing here is built yet.
 ## How it works
 
 - **Manifest V3** extension (Chrome, Edge, Brave, other Chromium browsers; Firefox planned).
-- A **content script** runs on Facebook pages and injects a stylesheet that hides the targeted elements with `display: none !important`. CSS hiding is fast and doesn't flicker on page load.
+- A **content script** runs on Facebook pages at `document_start` and injects a stylesheet, generated from the site's selectors, that hides the targeted elements with `display: none !important`. CSS hiding is fast and doesn't flicker on page load.
+- Features are switched off by attributes on `<html>` (`data-sod-off` pauses everything, `data-sod-skip="hideReactions …"` turns off individual features). Everything is hidden by default until settings load, so nothing flashes on screen.
 - Facebook is a single-page app that loads content continuously, so a **`MutationObserver`** handles elements that CSS selectors alone cannot target reliably (for example, matching by text or walking up from an icon to its button).
 - Settings are stored in **`chrome.storage.sync`**, so they follow the user across devices. The content script listens for changes and applies them live without a page reload.
 - The extension only **hides** elements. It never clicks, submits or reads personal data, and it makes no network requests.
@@ -53,27 +54,26 @@ All selectors live in one file per site (`src/sites/facebook/selectors.js`), so 
 
 **Known limitation:** ARIA labels are localized. The MVP supports **English** labels. Other languages need either a label map per locale or language-independent structural selectors.
 
-## Project structure (planned)
+## Project structure
 
 ```
 Smoke_of_Deceit/
 ├── manifest.json
 ├── src/
 │   ├── content/
-│   │   ├── main.js            # Bootstraps the site module for the current host
+│   │   ├── main.js            # Picks the site module, injects the CSS, applies settings
 │   │   └── observer.js        # Shared MutationObserver helper
 │   ├── sites/
 │   │   └── facebook/
 │   │       ├── selectors.js   # All Facebook selectors in one place
-│   │       ├── hide.css       # Static CSS rules
-│   │       └── index.js       # Dynamic rules plus feature toggles
+│   │       └── index.js       # Host matching plus JS-only rules (text matching)
 │   ├── popup/
 │   │   ├── popup.html
 │   │   ├── popup.css
 │   │   └── popup.js
 │   └── shared/
 │       └── settings.js        # Defaults plus chrome.storage helpers
-├── icons/
+├── icons/                     # (not yet added; Chrome shows a placeholder)
 └── README.md
 ```
 

@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "Smoke of Deceit",
+  "version": "0.1.0",
+  "description": "Remove likes, reactions and comment boxes from social media.",
+  "permissions": ["storage"],
+  "action": {
+    "default_title": "Smoke of Deceit",
+    "default_popup": "src/popup/popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.facebook.com/*"],
+      "js": [
+        "src/shared/settings.js",
+        "src/content/observer.js",
+        "src/sites/facebook/selectors.js",
+        "src/sites/facebook/index.js",
+        "src/content/main.js"
+      ],
+      "run_at": "document_start"
+    }
+  ]
+}
