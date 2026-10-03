@@ -77,15 +77,42 @@ Smoke_of_Deceit/
 └── README.md
 ```
 
-## Installation (development)
+## Running locally
+
+There is no build step. The extension loads straight from the source folder.
+
+### Load the extension
 
 1. Clone or download this repository.
 2. Open `chrome://extensions` (or `edge://extensions`, or `brave://extensions`).
-3. Turn on **Developer mode**.
-4. Click **Load unpacked** and select the project folder.
-5. Open or reload Facebook.
+3. Turn on **Developer mode** (top right).
+4. Click **Load unpacked** and select the project folder (the one containing `manifest.json`).
+5. Open or reload `https://www.facebook.com`.
 
-After changing the code, click the reload icon on the extension card and refresh Facebook.
+Pin the extension from the puzzle-piece menu so the popup is one click away.
+
+### Development loop
+
+| You changed | To apply it |
+| --- | --- |
+| Anything under `src/content/` or `src/sites/` | Click the reload icon on the extension card, then refresh the Facebook tab. |
+| `manifest.json` | Reload the extension card. If it shows an error, fix it and reload again. |
+| Anything under `src/popup/` | Close and reopen the popup. |
+
+### Debugging
+
+- **Content script:** open DevTools on the Facebook tab. In the Console, switch the context dropdown from `top` to **Smoke of Deceit** to run code in the extension's context, for example `Sod.settings.get().then(console.log)`.
+- **Is the CSS injected?** In the Elements panel, look for `<style id="smoke-of-deceit">` inside `<html>`. The `data-sod-off` and `data-sod-skip` attributes on `<html>` show the current toggle state.
+- **Something isn't hidden:** right-click it, choose **Inspect**, and note its `role` and `aria-label`, or the button text for comment buttons. Add the selector to `src/sites/facebook/selectors.js`.
+- **Elements marked by JS** carry `data-sod-hide="<feature>"`. Search the Elements panel for `data-sod-hide` to see them.
+- **Popup:** right-click the popup and choose **Inspect**.
+- **Reset settings:** in the content-script console context, run `chrome.storage.sync.clear()`.
+
+### Syntax check
+
+```sh
+for f in $(find src -name '*.js'); do node --check "$f"; done
+```
 
 ## Usage
 
@@ -118,6 +145,57 @@ Check each of the following with the feature on and with it off:
 - [ ] Hover or long press on the hidden Like area, which must not open the reaction picker
 - [ ] Infinite scroll: newly loaded posts are also cleaned
 - [ ] Toggling in the popup updates the page live
+
+## Publishing
+
+### Before the first release
+
+- [ ] **Add icons.** The Chrome Web Store requires a 128×128 PNG. Add `icons/16.png`, `icons/48.png` and `icons/128.png`, and reference them in `manifest.json` under `"icons"` and `"action.default_icon"`.
+- [ ] **Run the testing checklist** above on a real Facebook account.
+- [ ] **Avoid Facebook branding.** Don't use the Facebook logo or name as the extension's name or icon. Saying "works on Facebook" in the description is fine.
+- [ ] **Prepare store assets:** at least one screenshot (1280×800 or 640×400) and a small promo tile (440×280).
+
+### 1. Bump the version
+
+Every upload needs a higher `version` in `manifest.json` (for example `0.1.0` → `0.1.1`). Commit and tag it:
+
+```sh
+git commit -am "Release v0.1.1"
+git tag v0.1.1
+```
+
+### 2. Package
+
+Zip only the files the extension needs. `manifest.json` must be at the root of the zip.
+
+```sh
+VERSION=$(node -p "require('./manifest.json').version")
+mkdir -p dist
+zip -r "dist/smoke-of-deceit-$VERSION.zip" manifest.json src icons
+```
+
+Before uploading, unzip the archive into a temporary folder and load that folder with **Load unpacked**. This confirms the zip is complete.
+
+### 3. Chrome Web Store
+
+1. Register at the [Chrome Web Store Developer Dashboard](https://chrome.google.com/webstore/devconsole). There is a one-time US$5 registration fee.
+2. Click **New item** and upload the zip.
+3. **Store listing:** description, category (Productivity, for example), screenshots and promo tile.
+4. **Privacy practices:**
+   - *Single purpose:* "Hides like, reaction and comment controls on social media to reduce compulsive engagement."
+   - *Permission justifications:* `storage` saves the user's toggle settings. Host access to `facebook.com` is needed to inject the script that hides those elements.
+   - *Data usage:* certify that the extension collects no user data. No privacy policy is required when no data is collected.
+5. Submit for review. Review usually takes a few days. Extensions that request host access can take longer.
+
+To update the extension later, bump the version, re-zip, and upload on the item's **Package** tab.
+
+### 4. Microsoft Edge Add-ons (optional)
+
+The same zip works. Register for free in [Partner Center](https://partner.microsoft.com/dashboard/microsoftedge/), create a new extension, upload the zip, and fill in the same listing and privacy details.
+
+### 5. Firefox (planned)
+
+Firefox needs a `browser_specific_settings.gecko.id` in the manifest and testing in Firefox before it can be submitted to [addons.mozilla.org](https://addons.mozilla.org/developers/).
 
 ## Roadmap
 
