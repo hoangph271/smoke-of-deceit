@@ -31,11 +31,10 @@ Ordered roughly by impact. These are suggestions; nothing here is built yet.
 6. **Stories, Reels and Watch**: hide reaction and reply bars on Stories, and like/comment/share overlays on Reels and videos.
 7. **Friction for pausing**: require a short delay or a typed confirmation before the global switch turns off, so it cannot be disabled on impulse.
 8. **More platforms**: X/Twitter, YouTube, LinkedIn, Reddit, Threads. The architecture keeps each site's rules in its own module.
-9. **Firefox support**: Manifest V3 is supported in Firefox, so mainly packaging and testing.
 
 ## How it works
 
-- **Manifest V3** extension (Chrome, Edge, Brave, other Chromium browsers; Firefox planned).
+- **Manifest V3** extension. One codebase and one zip for Chrome, Edge, Brave and other Chromium browsers, and Firefox 140+.
 - A **content script** runs on Facebook and Instagram pages at `document_start` and injects a stylesheet, generated from the site's selectors, that hides the targeted elements with `display: none !important`. CSS hiding is fast and doesn't flicker on page load.
 - Features are switched off by attributes on `<html>` (`data-sod-off` pauses everything, `data-sod-skip="hideReactions …"` turns off individual features). Everything is hidden by default until settings load, so nothing flashes on screen.
 - Facebook is a single-page app that loads content continuously, so a **`MutationObserver`** handles elements that CSS selectors alone cannot target reliably (for example, matching by text or walking up from an icon to its button).
@@ -94,6 +93,14 @@ There is no build step. The extension loads straight from the source folder.
 
 Pin the extension from the puzzle-piece menu so the popup is one click away.
 
+### Load in Firefox
+
+1. Open `about:debugging#/runtime/this-firefox`.
+2. Click **Load Temporary Add-on…** and select `manifest.json`.
+3. Open or reload Facebook or Instagram.
+
+Temporary add-ons are removed when Firefox closes. Alternatively, `npx web-ext run` starts a fresh Firefox profile with the extension loaded and reloads it whenever a file changes.
+
 ### Development loop
 
 | You changed | To apply it |
@@ -115,6 +122,14 @@ Pin the extension from the puzzle-piece menu so the popup is one click away.
 
 ```sh
 for f in $(find src -name '*.js'); do node --check "$f"; done
+```
+
+### Lint (Firefox / AMO)
+
+Runs the same validator addons.mozilla.org uses on upload:
+
+```sh
+npx web-ext lint --ignore-files 'dist/**' '*.md'
 ```
 
 ## Usage
@@ -210,9 +225,29 @@ To update the extension later, bump the version, re-zip, and upload on the item'
 
 The same zip works. Register for free in [Partner Center](https://partner.microsoft.com/dashboard/microsoftedge/), create a new extension, upload the zip, and fill in the same listing and privacy details.
 
-### 5. Firefox (planned)
+### 5. Firefox Add-ons (AMO)
 
-Firefox needs a `browser_specific_settings.gecko.id` in the manifest and testing in Firefox before it can be submitted to [addons.mozilla.org](https://addons.mozilla.org/developers/).
+The same zip works. `manifest.json` already has what Firefox needs under `browser_specific_settings`:
+
+| Key | Why |
+| --- | --- |
+| `gecko.id` | Permanent add-on ID. Never change it after the first upload, or AMO treats it as a different add-on. |
+| `gecko.strict_min_version: 140.0` | The stylesheet relies on `:has()`, and `data_collection_permissions` needs Firefox 140 or later. |
+| `gecko.data_collection_permissions: { required: ["none"] }` | Required for every new add-on since November 2025. Declares that no data is collected, which Firefox shows in the install prompt. |
+| `gecko_android.strict_min_version: 142.0` | The minimum Firefox for Android that supports `data_collection_permissions`. |
+
+Steps:
+
+1. Run `npx web-ext lint --ignore-files 'dist/**' '*.md'` and fix any errors.
+2. Run the testing checklist in Firefox (see [Load in Firefox](#load-in-firefox)).
+3. Sign in at the [Add-on Developer Hub](https://addons.mozilla.org/developers/) with a Firefox account. Registration is free.
+4. Click **Submit a New Add-on**, choose **On this site** (listed on AMO), and upload the zip.
+5. Platforms: tick **Firefox**. Leave **Firefox for Android** unticked unless you have tested it there.
+6. Source code: answer **No**. The code isn't minified, bundled or transpiled, so reviewers can read the zip directly.
+7. Listing: summary, description, category (Privacy & Security or Social & Communication, for example) and screenshots. Add a short note to reviewers explaining that the extension only hides page elements with CSS and makes no network requests.
+8. Submit. Automated validation runs immediately and the add-on is usually live within minutes to a day. A human review may follow later.
+
+To update the extension later, bump the version, re-zip, and upload it as a new version on the add-on's page.
 
 ## Roadmap
 
@@ -220,7 +255,7 @@ Firefox needs a `browser_specific_settings.gecko.id` in the manifest and testing
 - [ ] v0.2: Engagement counts, Share and Comment buttons, notification badges
 - [ ] v0.3: Stories, Reels, Watch; pause friction
 - [ ] v0.4: X/Twitter
-- [ ] Firefox build
+- [x] Firefox build
 
 ## Name
 
