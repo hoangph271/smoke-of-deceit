@@ -172,8 +172,8 @@ Check each of the following with the feature on and with it off.
 
 **Toolbar icon**
 
-- [ ] Turning the global switch off shows the grey icon and the "(paused)" tooltip; turning it on restores the purple icon
-- [ ] The icon is still correct after restarting the browser
+- [x] Turning the global switch off shows the grey icon and the "(paused)" tooltip; turning it on restores the purple icon
+- [x] The icon is still correct after restarting the browser
 
 **Instagram**
 
@@ -197,9 +197,9 @@ Check each of the following with the feature on and with it off.
   for s in 16 32 48 128; do magick -background none -density 384 icons/icon.svg -resize ${s}x${s} icons/icon-$s.png; done
   for s in 16 32; do magick -background none -density 384 icons/icon-off.svg -resize ${s}x${s} icons/icon-off-$s.png; done
   ```
-- [ ] **Run the testing checklist** above on real Facebook and Instagram accounts.
+- [x] **Run the testing checklist** above on real Facebook and Instagram accounts.
 - [ ] **Avoid Meta branding.** Don't use the Facebook or Instagram logos or names as the extension's name or icon. Saying "works on Facebook and Instagram" in the description is fine.
-- [ ] **Prepare store assets:** at least one screenshot (1280×800 or 640×400) and a small promo tile (440×280).
+- [ ] **Prepare store assets:** screenshots (1280×800 or 640×400). Chrome also needs a small promo tile (440×280); AMO does not.
 
 ### 1. Bump the version
 
