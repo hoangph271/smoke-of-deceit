@@ -25,12 +25,14 @@
   },
   "content_scripts": [
     {
-      "matches": ["*://*.facebook.com/*"],
+      "matches": ["*://*.facebook.com/*", "*://*.instagram.com/*"],
       "js": [
         "src/shared/settings.js",
         "src/content/observer.js",
         "src/sites/facebook/selectors.js",
         "src/sites/facebook/index.js",
+        "src/sites/instagram/selectors.js",
+        "src/sites/instagram/index.js",
         "src/content/main.js"
       ],
       "run_at": "document_start"

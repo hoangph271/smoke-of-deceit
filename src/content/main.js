@@ -38,6 +38,15 @@
   Sod.settings.get().then(apply);
   Sod.settings.onChange(apply);
 
+  // For JS-only rules (event handlers), reading the same attributes the
+  // stylesheet uses. True before settings load, matching the CSS default.
+  Sod.featureOn = (key) => {
+    const root = document.documentElement;
+    const skipped = (root.getAttribute('data-sod-skip') || '').split(' ');
+    return !root.hasAttribute('data-sod-off') && !skipped.includes(key);
+  };
+  site.init?.();
+
   Sod.observe((root) => site.mark(root));
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => site.mark(document.documentElement));
