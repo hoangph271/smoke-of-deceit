@@ -30,6 +30,10 @@
     },
     "default_popup": "src/popup/popup.html"
   },
+  "background": {
+    "service_worker": "src/background/icon.js",
+    "scripts": ["src/shared/settings.js", "src/background/icon.js"]
+  },
   "content_scripts": [
     {
       "matches": ["*://*.facebook.com/*", "*://*.instagram.com/*"],

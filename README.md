@@ -17,7 +17,7 @@ Like buttons, reaction counts and comment boxes are built to keep you engaged. S
 | Hide Like / React button | Facebook: removes the Like button and the reaction picker that appears on hover or long press, on posts and on comments. Instagram: removes the heart on posts, Reels, Stories and comments, and blocks double-click to like. |
 | Hide comment box | Facebook: removes the "Write a comment…" input under posts, in the post modal, and in reply threads. Instagram: removes the "Add a comment…" input and the Story reply box. |
 | Per-feature toggles | Each feature can be switched on or off from the extension popup. Toggles apply to both sites. |
-| Global on/off | A single switch to pause the extension without uninstalling it. |
+| Global on/off | A single switch to pause the extension without uninstalling it. The toolbar icon turns grey, with the smoke cleared, while paused. |
 
 ### Proposed next (v0.2+)
 
@@ -39,6 +39,7 @@ Ordered roughly by impact. These are suggestions; nothing here is built yet.
 - Features are switched off by attributes on `<html>` (`data-sod-off` pauses everything, `data-sod-skip="hideReactions …"` turns off individual features). Everything is hidden by default until settings load, so nothing flashes on screen.
 - Facebook is a single-page app that loads content continuously, so a **`MutationObserver`** handles elements that CSS selectors alone cannot target reliably (for example, matching by text or walking up from an icon to its button).
 - Settings are stored in **`chrome.storage.sync`**, so they follow the user across devices. The content script listens for changes and applies them live without a page reload.
+- A small **background script** swaps the toolbar icon between the on and paused versions whenever the global switch changes, including from another synced device. It runs as a service worker in Chrome and an event page in Firefox.
 - The extension only **hides** elements. It never clicks, submits or reads personal data, and it makes no network requests.
 
 ### Selector strategy
@@ -59,6 +60,8 @@ All selectors live in one file per site (`src/sites/facebook/selectors.js`, `src
 Smoke_of_Deceit/
 ├── manifest.json
 ├── src/
+│   ├── background/
+│   │   └── icon.js            # Swaps the toolbar icon when paused
 │   ├── content/
 │   │   ├── main.js            # Picks the site module, injects the CSS, applies settings
 │   │   └── observer.js        # Shared MutationObserver helper
@@ -75,7 +78,7 @@ Smoke_of_Deceit/
 │   │   └── popup.js
 │   └── shared/
 │       └── settings.js        # Defaults plus chrome.storage helpers
-├── icons/                     # icon.svg source + 16/32/48/128 PNGs
+├── icons/                     # icon.svg / icon-off.svg sources + PNGs
 └── README.md
 ```
 
@@ -105,7 +108,7 @@ Temporary add-ons are removed when Firefox closes. Alternatively, `npx web-ext r
 
 | You changed | To apply it |
 | --- | --- |
-| Anything under `src/content/` or `src/sites/` | Click the reload icon on the extension card, then refresh the Facebook or Instagram tab. |
+| Anything under `src/content/`, `src/sites/` or `src/background/` | Click the reload icon on the extension card, then refresh the Facebook or Instagram tab. |
 | `manifest.json` | Reload the extension card. If it shows an error, fix it and reload again. |
 | Anything under `src/popup/` | Close and reopen the popup. |
 
@@ -116,6 +119,7 @@ Temporary add-ons are removed when Firefox closes. Alternatively, `npx web-ext r
 - **Something isn't hidden:** right-click it, choose **Inspect**, and note its `role` and `aria-label`, or the button text for comment buttons. Add the selector to that site's `selectors.js`.
 - **Elements marked by JS** carry `data-sod-hide="<feature>"`. Search the Elements panel for `data-sod-hide` to see them.
 - **Popup:** right-click the popup and choose **Inspect**.
+- **Background script:** in Chrome, click **service worker** on the extension card. In Firefox, click **Inspect** on the add-on in `about:debugging`.
 - **Reset settings:** in the content-script console context, run `chrome.storage.sync.clear()`.
 
 ### Syntax check
@@ -166,6 +170,11 @@ Check each of the following with the feature on and with it off.
 - [x] Infinite scroll: newly loaded posts are also cleaned
 - [x] Toggling in the popup updates the page live
 
+**Toolbar icon**
+
+- [ ] Turning the global switch off shows the grey icon and the "(paused)" tooltip; turning it on restores the purple icon
+- [ ] The icon is still correct after restarting the browser
+
 **Instagram**
 
 - [x] Home feed posts (heart hidden, comment box hidden)
@@ -182,7 +191,12 @@ Check each of the following with the feature on and with it off.
 
 ### Before the first release
 
-- [x] **Add icons.** `icons/icon.svg` is the source; regenerate the PNGs with `for s in 16 32 48 128; do magick -background none -density 384 icons/icon.svg -resize ${s}x${s} icons/icon-$s.png; done`.
+- [x] **Add icons.** `icons/icon.svg` is the source; `icons/icon-off.svg` is the paused version. Regenerate the PNGs with:
+
+  ```sh
+  for s in 16 32 48 128; do magick -background none -density 384 icons/icon.svg -resize ${s}x${s} icons/icon-$s.png; done
+  for s in 16 32; do magick -background none -density 384 icons/icon-off.svg -resize ${s}x${s} icons/icon-off-$s.png; done
+  ```
 - [ ] **Run the testing checklist** above on real Facebook and Instagram accounts.
 - [ ] **Avoid Meta branding.** Don't use the Facebook or Instagram logos or names as the extension's name or icon. Saying "works on Facebook and Instagram" in the description is fine.
 - [ ] **Prepare store assets:** at least one screenshot (1280×800 or 640×400) and a small promo tile (440×280).
@@ -235,6 +249,8 @@ The same zip works. `manifest.json` already has what Firefox needs under `browse
 | `gecko.strict_min_version: 140.0` | The stylesheet relies on `:has()`, and `data_collection_permissions` needs Firefox 140 or later. |
 | `gecko.data_collection_permissions: { required: ["none"] }` | Required for every new add-on since November 2025. Declares that no data is collected, which Firefox shows in the install prompt. |
 | `gecko_android.strict_min_version: 142.0` | The minimum Firefox for Android that supports `data_collection_permissions`. |
+
+`background` lists both `service_worker` (used by Chrome) and `scripts` (used by Firefox). Each browser ignores the other key, so `web-ext lint` shows a `BACKGROUND_SERVICE_WORKER_IGNORED` warning. That warning is expected and doesn't block submission.
 
 Steps:
 
