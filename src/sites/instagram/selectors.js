@@ -17,9 +17,16 @@
 
   const COMMENT_BOX_LABELS = ['Add a comment', 'Reply to'];
 
+  // Feed posts use a <textarea>. Reels (and newer surfaces) use a
+  // contenteditable rich-text editor that carries the label in aria-label or
+  // aria-placeholder instead.
   const commentTextboxes = COMMENT_BOX_LABELS.flatMap((label) => [
     `textarea[aria-label^="${label}"]`,
     `textarea[placeholder^="${label}"]`,
+    `[contenteditable="true"][aria-label^="${label}"]`,
+    `[contenteditable="true"][aria-placeholder^="${label}"]`,
+    `[role="textbox"][aria-label^="${label}"]`,
+    `[role="textbox"][aria-placeholder^="${label}"]`,
   ]);
 
   Sod.instagramSelectors = {
@@ -36,6 +43,9 @@
         // ...and the bare textarea, in case it isn't wrapped in a <form>.
         ...commentTextboxes,
       ],
+      // Used by index.js to find the box's emoji/Post row when there's no
+      // <form> to hide.
+      textboxes: commentTextboxes,
     },
   };
 })();
