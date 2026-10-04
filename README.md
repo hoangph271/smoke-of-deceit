@@ -157,26 +157,26 @@ Check each of the following with the feature on and with it off.
 
 **Facebook**
 
-- [ ] News feed posts
-- [ ] Post opened in the modal or permalink view
-- [ ] Group posts
-- [ ] Page posts
-- [ ] Comments and nested replies (the Like button on comments)
-- [ ] Hover or long press on the hidden Like area, which must not open the reaction picker
-- [ ] Infinite scroll: newly loaded posts are also cleaned
-- [ ] Toggling in the popup updates the page live
+- [x] News feed posts
+- [x] Post opened in the modal or permalink view
+- [x] Group posts
+- [x] Page posts
+- [x] Comments and nested replies (the Like button on comments)
+- [x] Hover or long press on the hidden Like area, which must not open the reaction picker
+- [x] Infinite scroll: newly loaded posts are also cleaned
+- [x] Toggling in the popup updates the page live
 
 **Instagram**
 
-- [ ] Home feed posts (heart hidden, comment box hidden)
-- [ ] Post opened in the modal and on its own page (`/p/…`)
-- [ ] Comments and replies (the small heart next to each comment)
-- [ ] Reels (side action bar and the comments panel)
-- [ ] Stories (heart and reply box)
-- [ ] Double-clicking a photo or video does not like it; with the feature off, it does
-- [ ] Comment, Share and Save buttons are still visible
-- [ ] The DM message box still works
-- [ ] Toggling in the popup updates the page live
+- [x] Home feed posts (heart hidden, comment box hidden)
+- [x] Post opened in the modal and on its own page (`/p/…`)
+- [x] Comments and replies (the small heart next to each comment)
+- [x] Reels (side action bar and the comments panel)
+- [x] Stories (heart and reply box)
+- [x] Double-clicking a photo or video does not like it; with the feature off, it does
+- [x] Comment, Share and Save buttons are still visible
+- [x] The DM message box still works
+- [x] Toggling in the popup updates the page live
 
 ## Publishing
 
