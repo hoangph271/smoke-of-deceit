@@ -1,1 +1,4 @@
 dist/
+
+# Raw store screenshots contain personal data; only commit the redacted, framed ones.
+store/*.png
