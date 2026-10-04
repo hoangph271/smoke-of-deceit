@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3a2f5e"/>
+      <stop offset="1" stop-color="#1c1630"/>
+    </linearGradient>
+    <linearGradient id="smoke" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e6dcff"/>
+      <stop offset="1" stop-color="#9d8fd1"/>
+    </linearGradient>
+    <linearGradient id="pouch" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#b08a5a"/>
+      <stop offset="1" stop-color="#6e4f2e"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background tile -->
+  <rect x="4" y="4" width="120" height="120" rx="26" fill="url(#bg)"/>
+
+  <!-- Smoke cloud rising from the pouch -->
+  <g fill="url(#smoke)">
+    <circle cx="44" cy="50" r="17"/>
+    <circle cx="64" cy="34" r="21"/>
+    <circle cx="86" cy="48" r="16"/>
+    <circle cx="74" cy="60" r="12"/>
+    <circle cx="54" cy="62" r="11"/>
+    <circle cx="97" cy="30" r="7" opacity="0.8"/>
+    <circle cx="28" cy="32" r="5" opacity="0.6"/>
+  </g>
+  <!-- Curl detail inside the cloud -->
+  <path d="M56 40 C 56 30, 72 28, 72 38 C 72 45, 62 46, 62 40"
+        fill="none" stroke="#7d6fb8" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- Pouch: flared mouth, cinched neck, round body -->
+  <path d="M48 70 C 42 64, 47 60, 54 63 L 74 63 C 81 60, 86 64, 80 70 Z"
+        fill="#8a6640"/>
+  <path d="M55 78 C 30 86, 30 116, 64 116 C 98 116, 98 86, 73 78 Z"
+        fill="url(#pouch)"/>
+  <rect x="50" y="69" width="28" height="10" rx="5" fill="#4a3220"/>
+  <!-- Drawstring tail -->
+  <path d="M74 75 C 84 80, 86 88, 82 94" fill="none"
+        stroke="#4a3220" stroke-width="4" stroke-linecap="round"/>
+</svg>

@@ -73,7 +73,7 @@ Smoke_of_Deceit/
 │   │   └── popup.js
 │   └── shared/
 │       └── settings.js        # Defaults plus chrome.storage helpers
-├── icons/                     # (not yet added; Chrome shows a placeholder)
+├── icons/                     # icon.svg source + 16/32/48/128 PNGs
 └── README.md
 ```
 
@@ -150,7 +150,7 @@ Check each of the following with the feature on and with it off:
 
 ### Before the first release
 
-- [ ] **Add icons.** The Chrome Web Store requires a 128×128 PNG. Add `icons/16.png`, `icons/48.png` and `icons/128.png`, and reference them in `manifest.json` under `"icons"` and `"action.default_icon"`.
+- [x] **Add icons.** `icons/icon.svg` is the source; regenerate the PNGs with `for s in 16 32 48 128; do magick -background none -density 384 icons/icon.svg -resize ${s}x${s} icons/icon-$s.png; done`.
 - [ ] **Run the testing checklist** above on a real Facebook account.
 - [ ] **Avoid Facebook branding.** Don't use the Facebook logo or name as the extension's name or icon. Saying "works on Facebook" in the description is fine.
 - [ ] **Prepare store assets:** at least one screenshot (1280×800 or 640×400) and a small promo tile (440×280).
