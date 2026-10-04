@@ -217,7 +217,7 @@ Zip only the files the extension needs. `manifest.json` must be at the root of t
 ```sh
 VERSION=$(node -p "require('./manifest.json').version")
 mkdir -p dist
-zip -r "dist/smoke-of-deceit-$VERSION.zip" manifest.json src icons
+zip -r "dist/smoke-of-deceit-$VERSION.zip" manifest.json LICENSE src icons -x "icons/*.svg"
 ```
 
 Before uploading, unzip the archive into a temporary folder and load that folder with **Load unpacked**. This confirms the zip is complete.
@@ -279,4 +279,6 @@ In Dota 2, Smoke of Deceit makes your party invisible. This extension does the s
 
 ## License
 
-To be decided (MIT suggested).
+Copyright (C) 2026 sneu
+
+Smoke of Deceit is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. See [LICENSE](LICENSE) for the full text.
