@@ -3,6 +3,11 @@
   "name": "Smoke of Deceit",
   "version": "0.1.0",
   "description": "Remove likes, reactions and comment boxes from social media.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "smoke-of-deceit@lightbeam.ai"
+    }
+  },
   "permissions": ["storage"],
   "action": {
     "default_title": "Smoke of Deceit",
